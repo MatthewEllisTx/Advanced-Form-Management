@@ -10,7 +10,9 @@
 /cypress
 
 # unignore my tests
-!/cypress/integration/MyTests
+!/cypress/integration/MyTests/
+!/cypress/integration/MyTests/*
+
 
 # production
 /build
