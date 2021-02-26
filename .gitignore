@@ -7,7 +7,7 @@
 
 # testing
 /coverage
-/cypress
+/cypress/*
 
 # unignore my tests
 !/cypress/integration/MyTests/
