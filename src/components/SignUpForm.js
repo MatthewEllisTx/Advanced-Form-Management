@@ -53,6 +53,18 @@ export default function SignUpForm(props){
 
   // this way better because it works, but clunky
   function altValidateParam(path, value){
+    function getErrorFor(param, listErr){
+      for(let i = 0; i <= listErr.length; i++){
+        //console.log(message, path, message.indexOf(path));
+        if(i === listErr.length){
+          return '';
+        }
+        if(listErr[i].indexOf(`${param},`) === 0){
+          return listErr[i].substring( listErr[i].indexOf(',')+1, listErr[i].length);
+        }
+      }
+    }
+
     signUpSchema.validate({...values, [path]: value}, {abortEarly: false})
       .then( () => {
         //console.log('passed');
@@ -60,18 +72,30 @@ export default function SignUpForm(props){
       })
       .catch( err =>{
         console.log(err, err.errors);
-        for(let i = 0; i <= err.errors.length; i++){
-          //console.log(message, path, message.indexOf(path));
-          if(i === err.errors.length){
-            setErrors({ ...errors, [path]: ''});
-            break;
-          }
-          if(err.errors[i].indexOf(`${path},`) === 0){
-            const newErr = err.errors[i].substring( err.errors[i].indexOf(',')+1, err.errors[i].length);
-            setErrors({ ...errors, [path]: newErr});
-            break;
-          }
+        if(path === 'password'){
+          setErrors({ ...errors, password: getErrorFor('password', err.errors), passwordConf: getErrorFor('passwordConf', err.errors)});
+        } else {
+          setErrors({ ...errors, [path]: getErrorFor(path, err.errors)});
         }
+
+        // Doesnt' work: Displays *all* errors before user input
+        // const newList = {...initialErrors};
+        // Object.keys(newList).forEach( param => newList[param] = getErrorFor(param, err.errors))
+        // setErrors(newList);
+
+        // Dosen't work: Doesn't update 'Mismatched Passwords' error if you change password to match confirm password
+        // for(let i = 0; i <= err.errors.length; i++){
+        //   //console.log(message, path, message.indexOf(path));
+        //   if(i === err.errors.length){
+        //     setErrors({ ...errors, [path]: ''});
+        //     break;
+        //   }
+        //   if(err.errors[i].indexOf(`${path},`) === 0){
+        //     const newErr = err.errors[i].substring( err.errors[i].indexOf(',')+1, err.errors[i].length);
+        //     setErrors({ ...errors, [path]: newErr});
+        //     break;
+        //   }
+        // }
       })
   }
 
