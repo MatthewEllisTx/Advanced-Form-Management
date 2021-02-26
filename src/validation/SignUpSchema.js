@@ -4,6 +4,7 @@ const signUpSchema = yup.object().shape({
   username: yup.string()
     .trim()
     .required('${path},Username is required')
+    .max(20, '${path},Username max length = 20')
     .min(3, '${path},Username min length = 3'),
   email: yup.string()
     .email('${path},Please enter a valid email')

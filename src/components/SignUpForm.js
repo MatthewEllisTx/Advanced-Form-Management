@@ -60,6 +60,7 @@ export default function SignUpForm(props){
           return '';
         }
         if(listErr[i].indexOf(`${param},`) === 0){
+          //console.log(listErr[i], value);
           return listErr[i].substring( listErr[i].indexOf(',')+1, listErr[i].length);
         }
       }
@@ -71,7 +72,7 @@ export default function SignUpForm(props){
         setErrors(initialErrors);
       })
       .catch( err =>{
-        console.log(err, err.errors);
+        //console.log(err, err.errors);
         if(path === 'password'){
           setErrors({ ...errors, password: getErrorFor('password', err.errors), passwordConf: getErrorFor('passwordConf', err.errors)});
         } else {
@@ -113,6 +114,8 @@ export default function SignUpForm(props){
   
   function onSubmit(evt){
     evt.preventDefault();
+    console.log(values);
+    setValues(initialValues);
   }
   
   function onChange(evt){
@@ -137,7 +140,7 @@ export default function SignUpForm(props){
       <h1>Sign Up</h1>
       <form onSubmit={onSubmit}>
         <LabelStyled>
-          Username <SpanStyled>{errors.username}</SpanStyled>
+          Username <SpanStyled className='username'>{errors.username}</SpanStyled>
           <input
             name='username'
             type='text'
@@ -148,7 +151,7 @@ export default function SignUpForm(props){
         </LabelStyled>
 
         <LabelStyled>
-          Email <SpanStyled>{errors.email}</SpanStyled>
+          Email <SpanStyled className='email'>{errors.email}</SpanStyled>
           <input
             name='email'
             type='email'
@@ -159,7 +162,7 @@ export default function SignUpForm(props){
         </LabelStyled>
 
         <LabelStyled>
-          Password <SpanStyled>{errors.password}</SpanStyled>
+          Password <SpanStyled className='password'>{errors.password}</SpanStyled>
           <input
             name='password'
             type='password'
@@ -170,7 +173,7 @@ export default function SignUpForm(props){
         </LabelStyled>
         
         <LabelStyled>
-          Confirm Password <SpanStyled>{errors.passwordConf}</SpanStyled>
+          Confirm Password <SpanStyled className='passwordConf'>{errors.passwordConf}</SpanStyled>
           <input
             name='passwordConf'
             type='password'
@@ -189,10 +192,10 @@ export default function SignUpForm(props){
             onChange={onChange}
           />
         </label>
-          <SpanStyled>{errors.TOS}</SpanStyled>
+          <SpanStyled className='TOS'>{errors.TOS}</SpanStyled>
         </DivTOSStyled>
         <DivRightStyled>
-          <button name='name' type='submit' disabled={disabled}>
+          <button type='submit' disabled={disabled}>
             Submit
           </button>
         </DivRightStyled>
