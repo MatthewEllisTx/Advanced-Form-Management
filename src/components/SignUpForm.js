@@ -1,19 +1,44 @@
 import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import axios from 'axios';
 import * as yup from 'yup';
 
 import signUpSchema from '../validation/SignUpSchema';
 
+const LabelStyled = styled.label`
+  display: flex;
+  justify-content: space-between;
+`
+
+const DivTOSStyled = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+`
+
+const DivRightStyled = styled.div`
+  display: flex;
+  margin: 8px 0 8px 0;
+  justify-content: flex-end;
+`
+
+const SpanStyled = styled.span`
+  color: #d90e00;
+`
+
+
 const initialValues = {
   username: '',
   email: '',
   password: '',
+  passwordConf: '',
   TOS: false,
 }
 const initialErrors = {
   username: '',
   email: '',
   password: '',
+  passwordConf: '',
   TOS: '',
 }
 
@@ -22,17 +47,45 @@ export default function SignUpForm(props){
   const [ errors, setErrors ] = useState(initialErrors);
   const [ disabled, setDisabled ] = useState(true);
 
+  //console.log(errors)
+
   // const { submit } = props;
-  function validateParam(name, value){
-    yup.reach(signUpSchema, name)
-      .validate(value)
+
+  // this way better because it works, but clunky
+  function altValidateParam(path, value){
+    signUpSchema.validate({...values, [path]: value}, {abortEarly: false})
       .then( () => {
-        setErrors({ ...errors, [name]: ''});
+        //console.log('passed');
+        setErrors(initialErrors);
       })
-      .catch(err => {
-        setErrors({ ...errors, [name]: err.errors[0]});
+      .catch( err =>{
+        console.log(err, err.errors);
+        for(let i = 0; i <= err.errors.length; i++){
+          //console.log(message, path, message.indexOf(path));
+          if(i === err.errors.length){
+            setErrors({ ...errors, [path]: ''});
+            break;
+          }
+          if(err.errors[i].indexOf(`${path},`) === 0){
+            const newErr = err.errors[i].substring( err.errors[i].indexOf(',')+1, err.errors[i].length);
+            setErrors({ ...errors, [path]: newErr});
+            break;
+          }
+        }
       })
   }
+
+  // this way bad because it checks only one param, and when comparing two params makes it very hard
+  // function validateParam(name, value){
+  //   yup.reach(signUpSchema, name)
+  //     .validate(value, {context: {password: 'a'}})
+  //     .then( () => {
+  //       setErrors({ ...errors, [name]: ''});
+  //     })
+  //     .catch(err => {
+  //       setErrors({ ...errors, [name]: err.errors[0]});
+  //     })
+  // }
   
   function onSubmit(evt){
     evt.preventDefault();
@@ -41,20 +94,26 @@ export default function SignUpForm(props){
   function onChange(evt){
     const { name, type } = evt.target;
     const value = type === 'checkbox' ? evt.target.checked : evt.target.value;
-    validateParam(name, value); //changes errors
+    //validateParam(name, value); //changes errors
+    altValidateParam(name, value); // also changes errors state
     setValues({ ...values, [name]: value });
   }
   
   useEffect(() => {
-    signUpSchema.isValid(values).then(valid => setDisabled(!valid));
-  }, [values])
+    signUpSchema.isValid(values)
+      .then( valid => {
+        if(valid === disabled)
+          setDisabled(!valid)
+        })
+      .catch( err => console.log(err));
+  }, [values, disabled])
 
   return (
     <div>
       <h1>Sign Up</h1>
       <form onSubmit={onSubmit}>
-        <label>
-          Username
+        <LabelStyled>
+          Username <SpanStyled>{errors.username}</SpanStyled>
           <input
             name='username'
             type='text'
@@ -62,10 +121,10 @@ export default function SignUpForm(props){
             onChange={onChange}
             placeholder='Username...'
           />
-        </label>
+        </LabelStyled>
 
-        <label>
-          Email
+        <LabelStyled>
+          Email <SpanStyled>{errors.email}</SpanStyled>
           <input
             name='email'
             type='email'
@@ -73,10 +132,10 @@ export default function SignUpForm(props){
             onChange={onChange}
             placeholder='name@email.com'
           />
-        </label>
+        </LabelStyled>
 
-        <label>
-          Password
+        <LabelStyled>
+          Password <SpanStyled>{errors.password}</SpanStyled>
           <input
             name='password'
             type='password'
@@ -84,8 +143,19 @@ export default function SignUpForm(props){
             onChange={onChange}
             placeholder='Password...'
           />
-        </label>
+        </LabelStyled>
         
+        <LabelStyled>
+          Confirm Password <SpanStyled>{errors.passwordConf}</SpanStyled>
+          <input
+            name='passwordConf'
+            type='password'
+            value={values.passwordConf}
+            onChange={onChange}
+            placeholder='Confirm Password...'
+          />
+        </LabelStyled>
+        <DivTOSStyled>
         <label>
           Agree to Terms of Service
           <input
@@ -95,12 +165,13 @@ export default function SignUpForm(props){
             onChange={onChange}
           />
         </label>
-
-        <label>
+          <SpanStyled>{errors.TOS}</SpanStyled>
+        </DivTOSStyled>
+        <DivRightStyled>
           <button name='name' type='submit' disabled={disabled}>
             Submit
           </button>
-        </label>
+        </DivRightStyled>
       </form>
     </div>
   )
