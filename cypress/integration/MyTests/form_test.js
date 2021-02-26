@@ -28,11 +28,11 @@ describe('forms tests', () => {
     tosButton().should('exist')
     submitButton().should('exist')
     
-    // usernameErr().should('be.visible')
-    // emailErr().should('be.visible')
-    // passwordErr().should('be.visible')
-    // passwordConfErr().should('be.visible')
-    // tosErr().should('be.visible')
+    usernameErr().should('not.be.visible')
+    emailErr().should('not.be.visible')
+    passwordErr().should('not.be.visible')
+    passwordConfErr().should('not.be.visible')
+    tosErr().should('not.be.visible')
   })
 
   it('check submit button disabled', () => {
@@ -53,14 +53,49 @@ describe('forms tests', () => {
     usernameInput()
       .clear()
       .should('have.value', '')
-
+      
     usernameErr().contains('Username is required').should('be.visible')
+    
+    usernameInput()
+    .type('DarthPeanut')
+    .should('have.value', 'DarthPeanut')
+    
+    usernameErr().should('not.be.visible')
+    
+    usernameInput()
+      .clear()
+      .should('have.value', '')
 
     usernameInput()
       .type('1234567890aoeuidhtnssaa')
       .should('have.value', '1234567890aoeuidhtnssaa')
 
     usernameErr().contains('Username max length = 20').should('be.visible')
+  })
+
+  it('check email input and erros', () => {
+    emailInput()
+      .should('have.value', '')
+      .type('aoeu')
+      .should('have.value', 'aoeu')
+
+    emailErr().contains('Please enter a valid email').should('be.visible')
+
+    emailInput()
+      .clear()
+      .should('have.value', '')
+
+    emailErr().contains('Email is required')
+
+    emailInput()
+      .type('valid@email.com')
+      .should('have.value', 'valid@email.com')
+
+    emailErr().should('not.be.visible')
+  })
+
+  it('check password inputs and erros', () => {
+
   })
 
 })
