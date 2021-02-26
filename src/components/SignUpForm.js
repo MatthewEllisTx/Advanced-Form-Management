@@ -144,7 +144,7 @@ export default function SignUpForm(props){
           <input
             name='username'
             type='text'
-            value={values.name}
+            value={values.username}
             onChange={onChange}
             placeholder='Username...'
           />

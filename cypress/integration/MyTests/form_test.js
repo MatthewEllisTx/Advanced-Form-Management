@@ -158,9 +158,13 @@ describe('forms tests', () => {
   })
 
   it('terms of service button', () => {
+    tosButton().should('not.be.checked')
+
     tosButton()
       .click()
     
+    tosButton().should('be.checked')
+
     tosButton()
       .click()
 
@@ -184,6 +188,13 @@ describe('forms tests', () => {
       .click()
 
     submitButton().should('not.be.disabled')
+    submitButton().click()
+
+    usernameInput().should('have.value', '')
+    emailInput().should('have.value', '')
+    passwordInput().should('have.value', '')
+    passwordConfInput().should('have.value', '')
+    tosButton().should('not.be.checked')
   })
 
 })
