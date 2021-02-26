@@ -44,9 +44,6 @@ describe('forms tests', () => {
       .should('have.value', '')
       .type('A')
       .should('have.value', 'A')
-    
-    //expect(usernameErr()).to.contain('Username min length = 3')
-    // cy.contains('Username min length = 3').should('be.visible')
 
     usernameErr().contains('Username min length = 3').should('be.visible')
 
@@ -94,8 +91,99 @@ describe('forms tests', () => {
     emailErr().should('not.be.visible')
   })
 
-  it('check password inputs and erros', () => {
+  describe('check password inputs and errors', () => {
+    it('check 1', () => {
+      passwordErr().should('not.be.visible')
+      passwordConfErr().should('not.be.visible')
+      passwordInput().should('have.value', '')
+      passwordConfInput().should('have.value', '')
 
+      passwordInput()
+        .should('have.value', '')
+        .type('12345')
+        .should('have.value', '12345')
+
+      passwordErr().contains('Password min length = 8').should('be.visible')
+      passwordConfErr().contains('The entered passwords do not match').should('be.visible')
+    })
+    
+    it('check 2', () => {
+      passwordInput()
+        .type('12345678')
+        .should('have.value', '12345678')
+
+      passwordErr().contains('Please use excactly one special character').should('be.visible')
+      passwordConfErr().contains('The entered passwords do not match').should('be.visible')
+    })
+    
+    it('check 3', () => {
+      passwordInput()
+        .type('1234567!')
+        .should('have.value', '1234567!')
+
+      passwordErr().should('not.be.visible')
+      passwordConfErr().contains('The entered passwords do not match').should('be.visible')
+      
+      passwordConfInput()
+      .type('1234567!')
+      .should('have.value', '1234567!')
+      
+      passwordConfErr().should('not.be.visible')
+    })
+    
+    it('check 4', () => {
+      passwordConfInput()
+        .type('1234567!')
+        .should('have.value', '1234567!')
+
+      passwordErr().should('not.be.visible')
+      passwordConfErr().contains('The entered passwords do not match').should('be.visible')
+      
+      passwordInput()
+      .type('1234567!')
+      .should('have.value', '1234567!')
+      
+      passwordConfErr().should('not.be.visible')
+    })
+    
+    it('check 5', () => {
+      passwordInput()
+        .type('1234')
+        .should('have.value', '1234')
+        .clear()
+
+      passwordErr().contains('Password is required')
+    })
+
+  })
+
+  it('terms of service button', () => {
+    tosButton()
+      .click()
+    
+    tosButton()
+      .click()
+
+    tosErr().contains('You must agree to the Terms of Service').should('be.visible')
+  })
+
+  it('submit button works', () => {
+    usernameInput()
+      .type('DarthPeanut')
+
+    emailInput()
+      .type('valid@email.com')
+
+    passwordInput()
+      .type('1234567*')
+
+    passwordConfInput()
+      .type('1234567*')
+
+    tosButton()
+      .click()
+
+    submitButton().should('not.be.disabled')
   })
 
 })

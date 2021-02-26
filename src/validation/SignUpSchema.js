@@ -12,7 +12,7 @@ const signUpSchema = yup.object().shape({
   password: yup.string()
     .required('${path},Password is required')
     .min(8, '${path},Password min length = 8')
-    .matches(/^[0-9A-Za-z]*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?][0-9a-zA-Z]*$/, '${path},Please use excactly one special charector'),
+    .matches(/^[0-9A-Za-z]*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?][0-9a-zA-Z]*$/, '${path},Please use excactly one special character'),
   passwordConf: yup.string()
     // .when('$password', (password) => {
     //   console.log(password);
